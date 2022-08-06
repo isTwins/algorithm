@@ -3,19 +3,18 @@ import sys
 notebook_height, notebook_width, sticker_nums = map(int, sys.stdin.readline().split())
 notebook = [[0] * notebook_width for _ in range(notebook_height)]
 
-def rotate_sticker(sticker_height, sticker_width):
-    tmp_sticker = [[0] * 10 for _ in range(10)]
+def rotate_sticker(sticker):
+    sticker_height = len(sticker)
+    sticker_width = len(sticker[0])
+    tmp_sticker = [[0]*sticker_height for _ in range(sticker_width)]
     
     for i in range(sticker_height):
         for j in range(sticker_width):
-            tmp_sticker[i][j] = sticker[i][j]
+            tmp_sticker[j][sticker_height-1-i] = sticker[i][j]
 
-    for i in range(sticker_width):
-        for j in range(sticker_height):
-            sticker[i][j] = tmp_sticker[sticker_height-1-j][i]
-
+    sticker = tmp_sticker
     sticker_height, sticker_width = sticker_width, sticker_height
-    return sticker_height, sticker_width
+    return sticker, sticker_height, sticker_width
     
 def attach_sticker(x, y):
     for i in range(sticker_height):
@@ -31,28 +30,28 @@ def attach_sticker(x, y):
 
 for _ in range(sticker_nums):
     sticker_height, sticker_width = map(int, sys.stdin.readline().split())
-    sticker = [[0]*10 for _ in range(10)]
+    sticker = []
     for i in range(sticker_height):
-        input_line = list(map(int, sys.stdin.readline().split()))
-        for j in range(sticker_width):
-            sticker[i][j] = input_line[j]
+        sticker.append(list(map(int, sys.stdin.readline().split())))
             
     for rotation in range(4):
         is_put = False
-        for x in range(notebook_height-sticker_height):
+        for x in range(notebook_height-sticker_height+1):
             if is_put:
                 break
-            for y in range(notebook_width-sticker_width):
+            for y in range(notebook_width-sticker_width+1):
+                # print(x, y, sticker_height, sticker_width, sticker)
                 if attach_sticker(x, y):
                     is_put = True
                     break
 
         if is_put:
             break
-        sticker_height, sticker_width = rotate_sticker(sticker_height, sticker_width)
-print(notebook)
-                    
-# 1. 스티커를 그대로 빈 공간에
-# 2. 스티커 붙이는 공간의 우선순위는 위, 왼쪽
-# 3. 붙일 공간이 없으면 시계 방향으로 90도 회전 후 2단계 반복
-# 4. 모든 방향을 했는데 없으면 해당 스티커 버림
+        sticker, sticker_height, sticker_width = rotate_sticker(sticker)
+
+answer = 0
+for i in range(notebook_height):
+    for j in range(notebook_width):
+        answer += notebook[i][j]
+
+print(answer)
