@@ -1,9 +1,5 @@
 def solution(n):
-    for i in range(3, n+1):
-        if n % 2 == 1:
-            answer = 2
-            break
-            
+    for i in range(2, n+1):
         if n % i == 1:
             answer = i
             break
